@@ -1,0 +1,163 @@
+
+
+
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <header className="bg-black text-white p-4">
+      <div className="flex items-center w-full">
+        {/* Logo */}
+        <span className="font-bold text-xl">REQUENDO</span>
+
+        {/* Menú escritorio */}
+        <nav
+          id="menu"
+          className={`${menuOpen ? "flex" : "hidden"} md:flex flex-row items-center space-x-6 ml-6 text-sm`}
+        >
+          <Link to="/home" className="hover:text-blue-400">Inicio</Link>
+
+          {/* Submenú Usuarios */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              Usuarios ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-44
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block md:hover:block"
+            >
+              <Link to="/nuevoUsuario" className="block px-4 py-2 hover:bg-gray-100">➕ Nuevo usuario</Link>
+              <Link to="/lista" className="block px-4 py-2 hover:bg-gray-100">📋 Lista</Link>
+              <Link to="/roles" className="block px-4 py-2 hover:bg-gray-100">🧩 Roles</Link>
+            </div>
+          </div>
+
+          {/* Logs */}
+          <Link to="/logs" className="hover:text-blue-400">Logs</Link>
+
+          {/* dashboard */}
+          <Link to="/dashboard" className="hover:text-blue-400">Dashboard</Link>
+
+          {/* Submenú DataBase */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              DataBase ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-56
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block focus-within:block"
+            >
+              <Link to="/manageItems" className="block px-4 py-2 hover:bg-gray-100">♦ Manage Items</Link>
+              <Link to="/managetour" className="block px-4 py-2 hover:bg-gray-100">🛩 Manage Tour</Link>
+              <Link to="/manageproviders" className="block px-4 py-2 hover:bg-gray-100">🛒 Manage Providers</Link>
+              <Link to="/manageclient" className="block px-4 py-2 hover:bg-gray-100">🤵 Manage Client</Link>
+              <Link to="/managedestinations" className="block px-4 py-2 hover:bg-gray-100">🪂 Manage Destinations</Link>
+            </div>
+          </div>
+
+          {/* Submenú portfolio */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              Portfolio ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-44
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block focus-within:block"
+            >
+              <Link to="/toi2026" className="block px-4 py-2 hover:bg-gray-100">♦ TOI 2026</Link>
+              <Link to="/ton2026" className="block px-4 py-2 hover:bg-gray-100">🛩 TON 2026</Link>
+            </div>
+          </div>
+
+          {/* Submenú quote */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              Quotes ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-56
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block focus-within:block"
+            >
+              <Link to="/newBooking" className="block px-4 py-2 hover:bg-gray-100">➕ New Booking</Link>
+              <Link to="/handleBooking" className="block px-4 py-2 hover:bg-gray-100">📋 Handle Booking</Link>
+              <Link to="/rolesQuotes" className="block px-4 py-2 hover:bg-gray-100">🧩 Roles</Link>
+            </div>
+          </div>
+
+          {/* Submenú Trips */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              Trips ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-56
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block focus-within:block"
+            >
+              <Link to="/operateBooking" className="block px-4 py-2 hover:bg-gray-100">♦ Operate Booking</Link>
+              <Link to="/feedback" className="block px-4 py-2 hover:bg-gray-100">🛩 Feedback</Link>
+            </div>
+          </div>
+
+          {/* Submenú financial */}
+          <div
+            className="relative group
+                       before:content-[''] before:absolute before:left-0 before:top-full before:w-full before:h-2 before:bg-transparent"
+          >
+            <button className="submenu-btn flex items-center hover:text-blue-400">
+              Financial ▼
+            </button>
+            <div
+              className="submenu hidden absolute left-0 top-full z-50 w-44
+                         bg-white text-black rounded-md shadow-lg
+                         group-hover:block hover:block focus-within:block"
+            >
+              <Link to="/financial" className="block px-4 py-2 hover:bg-gray-100">🛩 Consult</Link>
+            </div>
+          </div>
+        </nav>
+
+        {/* Derecha escritorio */}
+        <div className="hidden md:flex items-center space-x-4 ml-auto">
+          <span className="font-semibold">Impulse Travel</span>
+          <button className="bg-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-700 transition">
+            Cerrar sesión
+          </button>
+        </div>
+
+        {/* Botón hamburguesa */}
+        <button
+          id="menu-btn"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden flex flex-col space-y-1 ml-auto"
+        >
+          <span className="w-6 h-0.5 bg-white"></span>
+          <span className="w-6 h-0.5 bg-white"></span>
+          <span className="w-6 h-0.5 bg-white"></span>
+        </button>
+      </div>
+    </header>
+  );
+}
