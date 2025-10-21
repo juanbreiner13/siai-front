@@ -112,6 +112,16 @@ export default function Header() {
               <Link to="/financial" className="block px-4 py-2 hover:bg-gray-100">🛩 Consult</Link>
             </div>
           </div>
+
+          {/* submenu test */}
+          <div className="relative group">
+            <button className="w-full text-left md:w-auto flex items-center px-4 py-2 md:px-0 hover:text-blue-400">
+              Test ▼
+            </button>
+            <div className="hidden absolute left-0 top-full z-50 w-44 bg-white text-black rounded-md shadow-lg group-hover:block md:hover:block">
+              <Link to="/QuotesComponent" className="block px-4 py-2 hover:bg-gray-100">🛩 QuotesComponent</Link>
+            </div>
+          </div>
         </nav>
 
         {/* Derecha escritorio */}

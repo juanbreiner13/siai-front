@@ -1,40 +1,45 @@
 import {
+  Navigate,
+  Route,
   BrowserRouter as Router,
   Routes,
-  Route,
-  Navigate,
 } from "react-router-dom";
 import Header from "./components/Header";
 
 // Páginas de prueba
-import Home from "./pages/Home";
-import Usuarios from "./pages/Usuarios";
-import Logs from "./pages/Logs";
 import Dashboard from "./pages/Dashboard";
 import DataBase from "./pages/DataBase";
+import Financial from "./pages/Financial";
+import Home from "./pages/Home";
+import Logs from "./pages/Logs";
 import Portfolio from "./pages/Portfolio";
 import Quotes from "./pages/Quotes";
 import Trips from "./pages/Trips";
-import Financial from "./pages/Financial";
+import Usuarios from "./pages/Usuarios";
+import Test from "./pages/Test";
+
 
 
 // Páginas de administración SUBMENUS
-import NuevoUsuario from "./pages/NuevoUsuario";
+import Consult from "./pages/Consult";
+import Feedback from "./pages/Feedback";
+import HandleBooking from "./pages/HandleBooking";
 import Lista from "./pages/Lista";
-import Roles from "./pages/Roles";
-import Manageitems from "./pages/ManageItems";
-import ManageTour from "./pages/ManageTour";
-import ManageProviders from "./pages/ManageProviders";
 import ManageClient from "./pages/ManageClient";
 import ManageDestinations from "./pages/ManageDestinations";
+import Manageitems from "./pages/ManageItems";
+import ManageProviders from "./pages/ManageProviders";
+import ManageTour from "./pages/ManageTour";
+import NewBooking from "./pages/NewBooking";
+import NuevoUsuario from "./pages/NuevoUsuario";
+import OperateBooking from "./pages/OperateBooking";
+import Roles from "./pages/Roles";
+import RolesQuotes from "./pages/RolesQuotes";
 import Toi2026 from "./pages/Toi2026";
 import Ton2026 from "./pages/Ton2026";
-import NewBooking from "./pages/NewBooking";
-import HandleBooking from "./pages/HandleBooking";
-import RolesQuotes from "./pages/RolesQuotes";
-import OperateBooking from "./pages/OperateBooking";
-import Feedback from "./pages/Feedback";
-import Consult from "./pages/Consult";
+import QuotesComponent from "./pages/QuotesComponent";
+
+
 
 
 
@@ -56,6 +61,9 @@ export default function App() {
             <Route path="/quotes" element={<Quotes />} />
             <Route path="/trips" element={<Trips />} />
             <Route path="/financial" element={<Financial />} />
+            <Route path="/test" element={<Test />} />
+            
+           
 
             {/* Ruta de administración SUBMENUS */}
             <Route path="/nuevoUsuario" element={<NuevoUsuario />} />
@@ -74,7 +82,8 @@ export default function App() {
             <Route path="/operateBooking" element={<OperateBooking />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/consult" element={<Consult />} />
-
+            <Route path="/QuotesComponent" element={<QuotesComponent />} />
+            
 
             {/* Ruta comodín para 404 */}
             <Route path="*" element={<div className="p-6">Página no encontrada</div>} />
