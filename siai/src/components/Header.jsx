@@ -120,6 +120,7 @@ export default function Header() {
             </button>
             <div className="hidden absolute left-0 top-full z-50 w-44 bg-white text-black rounded-md shadow-lg group-hover:block md:hover:block">
               <Link to="/QuotesComponent" className="block px-4 py-2 hover:bg-gray-100">🛩 QuotesComponent</Link>
+              <Link to="/Test_Ventas" className="block px-4 py-2 hover:bg-gray-100">🛩 Test_Ventas</Link>
             </div>
           </div>
         </nav>

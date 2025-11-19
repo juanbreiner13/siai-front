@@ -20,6 +20,7 @@ import Test from "./pages/Test";
 
 
 
+
 // Páginas de administración SUBMENUS
 import Consult from "./pages/Consult";
 import Feedback from "./pages/Feedback";
@@ -38,6 +39,9 @@ import RolesQuotes from "./pages/RolesQuotes";
 import Toi2026 from "./pages/Toi2026";
 import Ton2026 from "./pages/Ton2026";
 import QuotesComponent from "./pages/QuotesComponent";
+import Test_Ventas from "./pages/Test_Ventas";
+
+
 
 
 
@@ -63,6 +67,8 @@ export default function App() {
             <Route path="/financial" element={<Financial />} />
             <Route path="/test" element={<Test />} />
             
+
+            
            
 
             {/* Ruta de administración SUBMENUS */}
@@ -83,6 +89,8 @@ export default function App() {
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/consult" element={<Consult />} />
             <Route path="/QuotesComponent" element={<QuotesComponent />} />
+            <Route path="/Test_Ventas" element={<Test_Ventas />} />
+            
             
 
             {/* Ruta comodín para 404 */}

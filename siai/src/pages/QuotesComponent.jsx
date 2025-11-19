@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-const EditableTourTable = () => {
+// Función para evitar múltiples requests mientras se escribe
+const debounce = (fn, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+};
+
+const EditableTourAutoSave = () => {
   const [tours, setTours] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [editValues, setEditValues] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // ✅ Cargar datos desde el backend
+  // ✅ Cargar tours desde el backend
   useEffect(() => {
     const fetchTours = async () => {
       try {
@@ -26,29 +33,15 @@ const EditableTourTable = () => {
         setLoading(false);
       }
     };
-
     fetchTours();
   }, []);
 
-  // ✅ Iniciar edición
-  const handleEdit = (id) => {
-    const fila = tours.find((tour) => tour.id === id);
-    setEditId(id);
-    setEditValues(fila);
-  };
-
-  // ✅ Detectar cambios en inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditValues({ ...editValues, [name]: value });
-  };
-
-  // ✅ Guardar cambios (PUT al backend)
-  const handleSave = async () => {
+  // ✅ Guardar cambios en backend (PUT)
+  const saveChange = async (id, updatedField) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/tour/${editId}`,
-        editValues,
+        `${import.meta.env.VITE_API_URL}/tour/${id}`,
+        updatedField,
         {
           headers: {
             Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}`,
@@ -56,22 +49,26 @@ const EditableTourTable = () => {
           },
         }
       );
-
-      // Actualizar frontend
-      const updated = tours.map((t) =>
-        t.id === editId ? editValues : t
-      );
-      setTours(updated);
-      setEditId(null);
+      console.log("Campo actualizado en BD:", updatedField);
     } catch (error) {
-      console.error("Error al guardar los cambios:", error);
+      console.error("Error al guardar el cambio:", error);
     }
   };
 
-  // ✅ Cancelar edición
-  const handleCancel = () => {
-    setEditId(null);
-    setEditValues({});
+  // ✅ Debounce para no spamear el backend
+  const debouncedSave = useCallback(debounce(saveChange, 800), []);
+
+  // ✅ Manejar cambios en los inputs
+  const handleChange = (id, field, value) => {
+    // 1️⃣ Actualiza el estado local
+    setTours((prevTours) =>
+      prevTours.map((tour) =>
+        tour.id === id ? { ...tour, [field]: value } : tour
+      )
+    );
+
+    // 2️⃣ Envía el cambio al backend después de 800ms sin escribir
+    debouncedSave(id, { [field]: value });
   };
 
   if (loading) {
@@ -83,7 +80,7 @@ const EditableTourTable = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
-        🧭 Grilla Editable de Tours
+        ✈️ Grilla Editable en Tiempo Real (Auto Save)
       </h2>
 
       <div className="overflow-x-auto">
@@ -95,88 +92,62 @@ const EditableTourTable = () => {
               <th className="border p-3 text-left">Description</th>
               <th className="border p-3 text-left">Inclusions</th>
               <th className="border p-3 text-left">Distribution</th>
-              <th className="border p-3 text-center">Acciones</th>
             </tr>
           </thead>
 
           <tbody>
             {tours.map((tour) => (
               <tr key={tour.id} className="hover:bg-gray-50">
-                {editId === tour.id ? (
-                  <>
-                    <td className="border p-2">
-                      <input
-                        name="variant"
-                        value={editValues.variant || ""}
-                        onChange={handleChange}
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <input
-                        name="master_tour"
-                        value={editValues.master_tour || ""}
-                        onChange={handleChange}
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <input
-                        name="description"
-                        value={editValues.description || ""}
-                        onChange={handleChange}
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <input
-                        name="inclusions"
-                        value={editValues.inclusions || ""}
-                        onChange={handleChange}
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <input
-                        name="distribution"
-                        value={editValues.distribution || ""}
-                        onChange={handleChange}
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
-                      />
-                    </td>
-
-                    <td className="border p-2 text-center">
-                      <button
-                        onClick={handleSave}
-                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
-                      >
-                        Guardar
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
-                      >
-                        Cancelar
-                      </button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td className="border p-2">{tour.variant}</td>
-                    <td className="border p-2">{tour.master_tour}</td>
-                    <td className="border p-2">{tour.description}</td>
-                    <td className="border p-2">{tour.inclusions}</td>
-                    <td className="border p-2">{tour.distribution}</td>
-                    <td className="border p-2 text-center">
-                      <button
-                        onClick={() => handleEdit(tour.id)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                      >
-                        Editar
-                      </button>
-                    </td>
-                  </>
-                )}
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={tour.variant || ""}
+                    onChange={(e) =>
+                      handleChange(tour.id, "variant", e.target.value)
+                    }
+                    className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={tour.master_tour || ""}
+                    onChange={(e) =>
+                      handleChange(tour.id, "master_tour", e.target.value)
+                    }
+                    className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={tour.description || ""}
+                    onChange={(e) =>
+                      handleChange(tour.id, "description", e.target.value)
+                    }
+                    className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={tour.inclusions || ""}
+                    onChange={(e) =>
+                      handleChange(tour.id, "inclusions", e.target.value)
+                    }
+                    className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={tour.distribution || ""}
+                    onChange={(e) =>
+                      handleChange(tour.id, "distribution", e.target.value)
+                    }
+                    className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -186,4 +157,4 @@ const EditableTourTable = () => {
   );
 };
 
-export default EditableTourTable;
+export default EditableTourAutoSave;
