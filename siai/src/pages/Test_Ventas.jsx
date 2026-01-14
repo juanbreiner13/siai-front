@@ -1,6 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
+const getRowColor = (type) => {
+  switch (type) {
+    case "LABEL":
+      return "bg-blue-100";
+    case "HOTEL":
+      return "bg-yellow-100";
+    default:
+      return "bg-white";
+  }
+};
+
 // 🔁 Debounce para evitar saturar el backend
 const debounce = (fn, delay) => {
   let timeout;
@@ -92,8 +103,41 @@ const EditableTestVentasAutoSave = () => {
     return <div className="text-center py-6 text-gray-600">Cargando...</div>;
   }
 
-  // ✅ Filtrar resultados según searchTerm
-  const filteredVentas = ventas.filter((venta) => {
+  // ===========================================================
+  // ✅ ORDENAR POR DÍA Y HORA
+  // ===========================================================
+
+  const normalizarHora = (hora) => {
+    if (!hora) return 0;
+
+    const [time, meridian] = hora.split(" ");
+    let [hh, mm] = time.split(":").map(Number);
+
+    // Conversión AM/PM a 24h
+    if (meridian?.toUpperCase() === "PM" && hh !== 12) hh += 12;
+    if (meridian?.toUpperCase() === "AM" && hh === 12) hh = 0;
+
+    return hh * 60 + mm;
+  };
+
+  const sortedVentas = [...ventas].sort((a, b) => {
+    const diaA = parseInt(a.dia) || 0;
+    const diaB = parseInt(b.dia) || 0;
+
+    // 1️⃣ Primero ordenar por día
+    if (diaA !== diaB) return diaA - diaB;
+
+    // 2️⃣ Si el día es igual, ordenar por hora AM/PM
+    const horaA = normalizarHora(a.hora);
+    const horaB = normalizarHora(b.hora);
+
+    return horaA - horaB;
+  });
+
+  // ===========================================================
+  // ✅ FILTRAR LAS VENTAS YA ORDENADAS
+  // ===========================================================
+  const filteredVentas = sortedVentas.filter((venta) => {
     const term = searchTerm.toLowerCase();
     return (
       venta.item?.toLowerCase().includes(term) ||
@@ -111,7 +155,6 @@ const EditableTestVentasAutoSave = () => {
           HANDLE QUOTE
         </h2>
 
-        {/* Campos de búsqueda (decorativos) */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <input
             type="text"
@@ -128,7 +171,10 @@ const EditableTestVentasAutoSave = () => {
             placeholder="Client"
             className="border rounded-md px-3 py-2 col-span-2"
           />
-          <input type="date" className="border rounded-md px-3 py-2 col-span-1" />
+          <input
+            type="date"
+            className="border rounded-md px-3 py-2 col-span-1"
+          />
           <input
             type="text"
             placeholder="Trip Name"
@@ -148,7 +194,6 @@ const EditableTestVentasAutoSave = () => {
 
       {/* MAIN SECTION */}
       <div className="bg-white shadow-md rounded-lg p-5">
-        {/* Botones superiores */}
         <div className="flex justify-between mb-3 flex-wrap gap-3">
           <div>
             <p className="text-sm">
@@ -205,6 +250,7 @@ const EditableTestVentasAutoSave = () => {
                 <th className="p-2 border">Día</th>
                 <th className="p-2 border">Hora</th>
                 <th className="p-2 border">Nota</th>
+                <th className="p-2 border">Item_type</th>
                 <th className="p-2 border">Estado</th>
                 <th className="p-2 border">Acción</th>
               </tr>
@@ -213,7 +259,8 @@ const EditableTestVentasAutoSave = () => {
             <tbody>
               {filteredVentas.length > 0 ? (
                 filteredVentas.map((venta) => (
-                  <tr key={venta.id} className="hover:bg-gray-50">
+                  <tr
+                    key={venta.id} className={`${getRowColor(venta.item_type)} hover:bg-gray-50`}>
                     <td className="p-2 border text-center">{venta.id}</td>
 
                     <td className="p-2 border">
@@ -223,7 +270,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "item", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
                     </td>
 
@@ -234,7 +281,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "costo", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
                     </td>
 
@@ -245,7 +292,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "venta", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
                     </td>
 
@@ -256,7 +303,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "pasajeros", e.target.value)
                         }
-                        className="border rounded p-1 w-16 text-center focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-16 text-center"
                       />
                     </td>
 
@@ -267,7 +314,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "dia", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
                     </td>
 
@@ -278,7 +325,7 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "hora", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
                     </td>
 
@@ -289,8 +336,23 @@ const EditableTestVentasAutoSave = () => {
                         onChange={(e) =>
                           handleChange(venta.id, "nota", e.target.value)
                         }
-                        className="border rounded p-1 w-full focus:ring focus:ring-blue-300"
+                        className="border rounded p-1 w-full"
                       />
+                    </td>
+
+                    <td className="p-2 border">
+                      <select
+                        value={venta.item_type || ""}
+                        onChange={(e) =>
+                          handleChange(venta.id, "item_type", e.target.value)
+                        }
+                        className="border rounded p-1 w-full cursor-pointer"
+                      >
+                        <option value="">Seleccione...</option>
+                        <option value="ITEM">ITEM</option>
+                        <option value="LABEL">LABEL</option>
+                        <option value="HOTEL">HOTEL</option>
+                      </select>
                     </td>
 
                     <td className="p-2 border text-center">
